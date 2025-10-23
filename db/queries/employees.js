@@ -16,7 +16,8 @@ export async function createEmployee({ name, birthday, salary }) {
 
 /** @returns all employees */
 export async function getEmployees() {
-  // TODO
+  const result = await db.query(`SELECT * FROM employees`);
+  return result.rows;
 }
 
 /**
@@ -24,7 +25,8 @@ export async function getEmployees() {
  * @returns undefined if employee with the given id does not exist
  */
 export async function getEmployee(id) {
-  // TODO
+  const result = await db.query(`SELECT * FROM employees WHERE id = $1`, [id]);
+  return result.rows[0];
 }
 
 /**
@@ -32,7 +34,12 @@ export async function getEmployee(id) {
  * @returns undefined if employee with the given id does not exist
  */
 export async function updateEmployee({ id, name, birthday, salary }) {
-  // TODO
+  const result = await db.query(
+    `UPDATE employees SET name = $1, birthday = $2, salary = $3 WHERE id = $4
+  RETURNING *`,
+    [name, birthday, salary, id]
+  );
+  return result.rows[0];
 }
 
 /**
@@ -40,5 +47,9 @@ export async function updateEmployee({ id, name, birthday, salary }) {
  * @returns undefined if employee with the given id does not exist
  */
 export async function deleteEmployee(id) {
-  // TODO
+  const result = await db.query(
+    `DELETE FROM employees WHERE id = $1 RETURNING *`,
+    [id]
+  );
+  return result.rows[0];
 }
